@@ -45,6 +45,7 @@ jobs:
           working-directory: guestbook-deploy
           image-name-tag: ${{ needs.build-image.outputs.image }}
           ssh-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-prod:
     needs: [build-image, deploy-stage]
@@ -59,3 +60,4 @@ jobs:
           working-directory: guestbook-deploy
           image-name-tag: ${{ needs.build-image.outputs.image }}
           ssh-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
