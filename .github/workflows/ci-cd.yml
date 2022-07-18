@@ -11,29 +11,24 @@ jobs:
     outputs:
       image: ${{ steps.push-image.outputs.image }}
     steps:
-      - 
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           # fetch-depth: 0 needed for `git rev-list --count` to work properly
           fetch-depth: 0
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      -
-        name: Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - 
-        name: Set up Golang
+      - name: Set up Golang
         uses: actions/setup-go@v2
         with:
           go-version: '1.18.0'
-      - 
-        name: Push Image
+      - name: Push Image
         id: push-image
         run: make push-latest
 
@@ -41,40 +36,26 @@ jobs:
     needs: build-image
     runs-on: ubuntu-latest
     steps:
-      -
-        uses: webfactory/ssh-agent@v0.5.4
+      - name: Push promoted image to deployment repo
+        uses: kustomize-everything/action-promotion
         with:
-          ssh-private-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
-      -
-        uses: imranismail/setup-kustomize@v1
-      -
-        name: Kustomize
-        run: |
-          git config --global user.name "Deploy Bot"
-          git config --global user.email "no-reply@akuity.io"
-          git clone git@github.com:akuity/guestbook-deploy.git
-          cd guestbook-deploy/env/stage
-          kustomize edit set image ${{ needs.build-image.outputs.image }}
-          git commit -a -m "Deploy stage: ${{ needs.build-image.outputs.image }}"
-          git push
+          target-repo: kustomize-everything/guestbook-deploy
+          target-branch: main
+          target-dir: env/stage
+          working-dir: guestbook-deploy
+          image-name-tag: ${{ needs.build-image.outputs.image }}
+          ssh-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
 
   deploy-prod:
     needs: [build-image, deploy-stage]
     runs-on: ubuntu-latest
     steps:
-      -
-        uses: webfactory/ssh-agent@v0.5.4
+      - name: Push promoted image to deployment repo
+        uses: kustomize-everything/action-promotion
         with:
-          ssh-private-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
-      -
-        uses: imranismail/setup-kustomize@v1
-      -
-        name: Kustomize
-        run: |
-          git config --global user.name "Deploy Bot"
-          git config --global user.email "no-reply@akuity.io"
-          git clone git@github.com:akuity/guestbook-deploy.git
-          cd guestbook-deploy/env/prod
-          kustomize edit set image ${{ needs.build-image.outputs.image }}
-          git commit -a -m "Deploy prod: ${{ needs.build-image.outputs.image }}"
-          git push
+          target-repo: kustomize-everything/guestbook-deploy
+          target-branch: main
+          target-dir: env/stage
+          working-dir: guestbook-deploy
+          image-name-tag: ${{ needs.build-image.outputs.image }}
+          ssh-key: ${{ secrets.GUESTBOOK_DEPLOY_KEY }}
