@@ -1,6 +1,6 @@
 # Guestbook Example Application
 
-This repository contains the source code to a demo application based on the [Kubernetes guestbook application](https://github.com/kubernetes/examples/tree/master/guestbook-go) for the purposes of demonstrating a GitOps based CI/CD pipeline. The git repository containing the Kubernetes deployment manifests is located at a separate repository: https://github.com/akuity/guestbook-deploy.
+This repository contains the source code to a demo application based on the [Kubernetes guestbook application](https://github.com/kubernetes/examples/tree/master/guestbook-go) for the purposes of demonstrating a GitOps based CI/CD pipeline. The git repository containing the Kubernetes deployment manifests is located at a separate repository: https://github.com/kustomize-everything/guestbook-deploy.
 
 A code change to this repository will cause:
 1. A new [ghcr.io/kustomize-everything/guestbook](https://github.com/kustomize-everything/guestbook/pkgs/container/guestbook) image to be published with a unique image tag that incorporates the commit SHA into the image tag (e.g. `ghcr.io/kustomize-everything/guestbook:00003-f32b7f8`).
@@ -10,3 +10,7 @@ A code change to this repository will cause:
 ## Screenshot
 
 ![Guestbook](guestbook-page.png)
+
+## Appreciation
+
+This repo is forked from [akuity/guestbook](https://github.com/kustomize-everything/guestbook). Thank you Akuity (@jessesuen and @dhpup, specifically) for creating that project!

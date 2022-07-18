@@ -1,4 +1,4 @@
-module github.com/akuity/guestbook
+module github.com/kustomize-everything/guestbook
 
 go 1.17
 
